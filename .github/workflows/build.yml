@@ -1,0 +1,27 @@
+name: build
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  uf2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y cmake ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Upload UF2
+        uses: actions/upload-artifact@v4
+        with:
+          name: pico_hid_keyboard_min.uf2
+          path: build/pico_hid_keyboard_min.uf2
